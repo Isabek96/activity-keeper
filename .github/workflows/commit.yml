@@ -2,7 +2,7 @@ name: Auto Commit Activity
 
 on:
   schedule:
-    - cron: '0 3 * * *'  # Запуск каждый день в 3:00 UTC
+    - cron: '0 3 * * *'
   workflow_dispatch:
 
 jobs:
@@ -10,19 +10,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
+    - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Make a dummy change
+    - name: Create/update activity file
       run: |
-        echo "$(date '+%Y-%m-%d %H:%M:%S')" >> activity.log
+        echo "$(date)" >> activity.txt
+        cat activity.txt
 
-    - name: Commit & Push
+    - name: Commit and push
       run: |
-        git config user.name "isabek-bot"
-        git config user.email "kz_mail_xx@mail.ru"
-        git add .
-        git commit -m "🤖 daily activity commit - $(date '+%Y-%m-%d')" || echo "No changes to commit"
+        git config --global user.name "isabek-bot"
+        git config --global user.email "kz_mail_xx@mail.ru"
+        git add activity.txt
+        git commit -m "🟢 Auto commit $(date '+%Y-%m-%d')" || echo "Nothing to commit"
         git push origin main
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
