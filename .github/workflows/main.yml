@@ -1,0 +1,26 @@
+name: Auto Commit Activity
+
+on:
+  schedule:
+    - cron: '0 3 * * *' # каждый день в 3:00 UTC
+  workflow_dispatch:
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Make a fake change
+      run: |
+        echo "// 🤖 Auto commit at $(date)" >> keep_alive.txt
+
+    - name: Commit and push
+      run: |
+        git config --global user.name "isabek-bot"
+        git config --global user.email "kz_mail_xx@mail.ru"
+        git add keep_alive.txt
+        git commit -m "🤖 auto commit: $(date '+%Y-%m-%d %H:%M:%S')" || echo "Nothing to commit"
+        git push
